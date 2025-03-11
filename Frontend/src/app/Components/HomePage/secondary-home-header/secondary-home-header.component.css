@@ -1,0 +1,156 @@
+/* From Uiverse.io by alshahwan */ 
+button {
+  background-color: #fff;
+  border: 1px solid #bc2a8d;
+  padding: 5px;
+  position: relative;
+  width: 7.2em;
+  height: 2em;
+  transition: 0.5s;
+  font-size: 20px;
+  border-radius: 0.4em;
+}
+
+button p {
+  position: absolute;
+  top: 0.2em;
+  left: 1.2em;
+  margin: 0;
+  padding: 0;
+  transition: .5s;
+  color: #bc2a8d;
+  font-family: 'LatoBold';
+}
+
+button svg {
+  position: absolute;
+  top: 0.45em;
+  right: 0.5em;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  transition: 0.5s;
+  height: 1em;
+  fill: #fff
+}
+
+button:hover p {
+  left: 0.6em;
+  color: #fff
+}
+
+button:hover svg {
+  opacity: 1;
+}
+
+button:hover {
+  background-color: #bc2a8d;
+}
+
+
+.ezy__cta6 {
+  /* Bootstrap variables */
+  --bs-body-color: #fff;
+	--bs-body-bg: rgb(255, 255, 255);
+
+	/* Easy Frontend variables */
+	--ezy-theme-color: #928d2e;
+	--ezy-theme-color-rgb: 46, 49, 146;
+
+  background-color: var(--bs-body-bg);
+  overflow: hidden;
+  padding: 50px 0;
+}
+
+/* Gray Block Style */
+.gray .ezy__cta6,
+.ezy__cta6.gray {
+  /* Bootstrap variables */
+  --bs-body-bg: rgb(246, 246, 246);
+}
+
+/* Dark Gray Block Style */
+.dark-gray .ezy__cta6,
+.ezy__cta6.dark-gray {
+  /* Bootstrap variables */
+  --bs-body-color: #ffffff;
+  --bs-body-bg: rgb(30, 39, 53);
+}
+
+/* Dark Block Style */
+.dark .ezy__cta6,
+.ezy__cta6.dark {
+  /* Bootstrap variables */
+  --bs-body-color: #ffffff;
+  --bs-body-bg: rgb(11, 23, 39);
+}
+
+@media (min-width: 991px) {
+  .ezy__cta6 {
+    padding: 80px 0;
+  }
+}
+
+.ezy__cta6-heading {
+  font-weight: bold;
+  font-size: 25px;
+  line-height: 25px;
+  color: var(--bs-body-color);
+}
+
+@media (min-width: 768px) {
+  .ezy__cta6-heading {
+    font-size: 40px;
+    line-height: 40px;
+  }
+}
+
+.ezy__cta6-sub-heading {
+  font-size: 18px;
+  line-height: 25px;
+  color: var(--bs-body-color);
+  opacity: 0.8;
+}
+
+.ezy__cta6-form-card {
+  background-color: rgba(80, 80, 80, 0.85);
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.ezy__cta6 .form-control {
+  min-height: 48px;
+  line-height: 26px;
+  border: none;
+  background: rgba(255, 255, 255, 1);
+  color: #000000;
+}
+
+.ezy__cta6 .form-control:focus {
+  box-shadow: none;
+}
+
+.ezy__cta6-btn {
+  padding: 12px 30px;
+  min-width: 110px;
+  height: 48px;
+  background-color: var(--ezy-theme-color);
+  border-color: var(--ezy-theme-color);
+}
+
+.ezy__cta6-btn:hover {
+  background-color: rgba(var(--ezy-theme-color-rgb), 0.9);
+  border-color: rgba(var(--ezy-theme-color-rgb), 0.9);
+}
+
+.ezy__cta6-avatar {
+  border-radius: 50% 30% 0 0;
+  width: 100%;
+}
+
+@media (min-width: 991px) {
+  .ezy__cta6-avatar {
+    border-radius: 50% 0 0 40%;
+    width: auto;
+  }
+}

@@ -1,0 +1,47 @@
+@font-face {
+  font-family: "KelsonBold";
+  src: url("/Fonts/Headlines/Kelson-Sans-Bold.ttf");
+}
+
+@font-face {
+  font-family: "KelsonLight";
+  src: url("/Fonts/Headlines/Kelson-Sans-Light.ttf");
+}
+
+@font-face {
+  font-family: "KelsonRegular";
+  src: url("/Fonts/Headlines/Kelson-Sans-Regular.ttf");
+}
+
+@font-face {
+  font-family: "LatoRegular";
+  src: url("/Fonts/Content/Lato-Regular.ttf");
+}
+
+@font-face {
+  font-family: "LatoLight";
+  src: url("/Fonts/Content/Lato-Light.ttf");
+}
+
+@font-face {
+  font-family: "LatoSemiBold";
+  src: url("/Fonts/Content/Lato-Semibold.ttf");
+}
+
+@font-face {
+  font-family: "LatoBold";
+  src: url("/Fonts/Content/Lato-Bold.ttf");
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "KelsonBold";
+}
+
+p {
+  font-family: "LatoRegular";
+}

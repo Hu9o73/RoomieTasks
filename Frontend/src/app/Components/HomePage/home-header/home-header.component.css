@@ -1,0 +1,52 @@
+.ezy__numbers12 {
+  /* Bootstrap variables */
+  --bs-body-color: #000;
+	--bs-body-bg: rgb(255, 255, 255);
+
+	/* Easy Frontend variables */
+	--ezy-theme-color: #2e3192;
+	--ezy-theme-color-rgb: 46, 49, 146;
+  
+    background-image: url(https://media.licdn.com/dms/image/v2/C4E1BAQFqm37DwJlRog/company-background_10000/company-background_10000/0/1585223316131/ple_lonard_de_vinci_cover?e=2147483647&v=beta&t=zmppBjeviAwe3F_UOu7mJo0VOWPgbJs9BBGXfOqQLUs);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fff;
+    overflow: hidden;
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+  
+  @media (min-width: 768px) {
+    .ezy__numbers12 {
+      padding: 150px 0;
+    }
+  }
+  
+  .ezy__numbers12-heading {
+    font-weight: bold;
+    font-size: 25px;
+    line-height: 1;
+  }
+  
+  @media (min-width: 768px) {
+    .ezy__numbers12-heading {
+      font-size: 45px;
+    }
+  }
+  .ezy__numbers12-sub-heading {
+    font-size: 16px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  
+  .ezy__numbers12-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(135deg, rgba(91, 91, 91, 0.85), rgba(219, 234, 11, 0.674));
+  }

@@ -1,0 +1,54 @@
+<div class="ezy__nav2">
+  <nav class="navbar navbar-expand-lg py-3">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="LogoPack/RoomieTasks.png" alt="ESN Logo"
+          style="height:80px;">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span><span></span></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mt-4 mt-lg-0">
+          <li class="nav-item"><a class="nav-link active" routerLink="">Home</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/esn">What's RoomieTasks ?</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/TheTeam">Meet the team</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/faq">F.A.Q.</a></li>
+        </ul>
+
+        <!-- Conditional display based on authentication status -->
+        <ul class="navbar-nav mb-2 mb-lg-0 ms-lg-3">
+          <!-- Show these buttons if the user is not authenticated -->
+          <ng-container *ngIf="!isAuthenticated">
+            <li class="nav-item me-2">
+              <button class="btn btn-outline-primary px-3 kelsonReg" routerLink="/signup">Sign Up</button>
+            </li>
+            <br>
+            <li class="nav-item">
+              <button class="btn btn-primary px-3 kelsonReg" routerLink="/login">Log In</button>
+            </li>
+          </ng-container>
+
+          <!-- Show user info and logout button if the user is authenticated -->
+          <ng-container *ngIf="isAuthenticated">
+            <li class="nav-item">
+              <div class="user-info">
+                Connecté en tant que : {{ user.firstName }} {{ user.lastName }}
+              </div>
+            </li>
+            <li class="nav-item me-2">
+              <button class="btn btn-outline-primary px-3 kelsonReg" (click)="logout()">Logout</button>
+            </li>
+            <br>
+            <li class="nav-item">
+              <button class="btn btn-primary px-3 kelsonReg" routerLink="/dashboard">Mon Espace</button>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>

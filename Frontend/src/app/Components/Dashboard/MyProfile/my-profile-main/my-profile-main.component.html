@@ -1,0 +1,122 @@
+<div class="container-fluid">
+	<!-- Alert message if needed 
+	<div class="row">
+		<div class="col-md-12">
+			<div class="alert alert-dismissable alert-danger">
+				<h4>Alert!</h4>
+				<strong>Warning!</strong> This is a test message, shown to all users.
+			</div>
+		</div>
+	</div>
+	-->
+	<div class="row">
+		<div class="col-md-4">
+			<img alt="Profile Picture" src="ProfilePic.png" class="rounded-circle"
+				height="220px" />
+		</div>
+		<div class="col-md-8">
+			<h3>Profile information of {{ firstname }} {{ lastname }}</h3>
+			<ul>
+				<li class="list-item">Nickname: {{ nickname }}</li>
+				<li class="list-item">Email: {{ email }}</li>
+				<li class="list-item">School: {{ school }}</li>
+				<li class="list-item">Program: {{ program }}</li>
+				<li class="list-item">Year: {{ year }}</li>
+				<li class="list-item">Role: {{ role }}</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<hr />
+			<h3>Modify my informations</h3>
+			<form role="form">
+				<div class="form-group">
+					<label> Nickname </label>
+					<input class="form-control" [(ngModel)]="nickname" name="nickname" />
+				</div>
+				<br />
+				<label>Scholarship information</label>
+				<div class="input-group">
+					<select id="inputSchool" class="form-control" [(ngModel)]="school" name="school">
+						<option value="" disabled selected>School...</option>
+						<option>ESILV</option>
+						<option>EMLV</option>
+						<option>IIM</option>
+					</select>
+					<select id="inputProgram" class="form-control" [(ngModel)]="program" name="program">
+						<option value="" disabled selected>Program...</option>
+						<option>Classic</option>
+						<option>Bachelor</option>
+						<option>Erasmus</option>
+						<option>Study Abroad</option>
+						<option>MSC</option>
+						<option>MBA</option>
+					</select>
+					<select id="inputYear" class="form-control" [(ngModel)]="year" name="year">
+						<option value="" disabled selected>Year...</option>
+						<option>A1</option>
+						<option>A2</option>
+						<option>A3</option>
+						<option>A4</option>
+						<option>A5</option>
+						<option>Alumni</option>
+					</select>
+				</div>
+				<br />
+				<div class="form-group">
+					<label> Email address </label>
+					<input type="email" class="form-control" [(ngModel)]="email" name="email" />
+				</div>
+				<br />
+				<div class="form-group">
+					<label>
+						Password <br />
+						<small>(To confirm it's you, to modify it see section below)</small>
+					</label>
+					<input type="password" class="form-control" [(ngModel)]="password" name="password" />
+				</div>
+
+				<br />
+				<button type="submit" (click)="modifyUserInfo()" class="btn btn-primary">
+					Modify defined fields
+				</button>
+			</form>
+			<br />
+			<div *ngIf="errorMessage" class="alert alert-warning">
+				{{ errorMessage }}
+			</div>
+			<div *ngIf="successMessage" class="alert alert-success">
+				{{ successMessage }}
+			</div>
+			<br />
+			<hr />
+			<!-- Password modification section 
+			<h3>Modify Password</h3>
+			<form role="form">
+				<div class="form-group">
+					<label for="currentPassword"> Current Password </label>
+					<input type="password" class="form-control" [(ngModel)]="password" name="password" />
+				</div>
+				<br />
+				<div class="form-group">
+					<label> New Password </label>
+					<input type="password" class="form-control" [(ngModel)]="newPassword" name="newPassword" />
+				</div>
+				<br />
+				<div class="form-group">
+					<label> Confirm new Password </label>
+					<input type="password" class="form-control" [(ngModel)]="confirmNewPassword"
+						name="confirmNewPassword" />
+				</div>
+
+				<br />
+				<button type="submit" class="btn btn-primary">Modify User !</button>
+				<br /><br />
+			</form>
+			-->
+		</div>
+	</div>
+</div>
+
+<app-home-footer />
