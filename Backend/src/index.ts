@@ -4,11 +4,11 @@ import fs from 'fs';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-
 // Import endpoints
 import basicEndpoints from "./api/utilityEndpoints";
 import authEndpoints from "./api/routes/auth";
 import memberEndpoints from "./api/memberEndpoints";
+import householdEndpoints from "./api/householdEndpoints"; // New import
 
 // Import database
 import sequelize from "./ConfigFiles/dbConfig";
@@ -25,9 +25,6 @@ const isProd = false;
 
 // Body parser
 app.use(express.json());
-
-// CORS for any origin: 
-// app.use(cors());
 
 // CORS for specific origins
 app.use(cors({
@@ -53,6 +50,7 @@ const swaggerOptions = {
 app.use(basicEndpoints);
 app.use(authEndpoints);
 app.use(memberEndpoints);
+app.use(householdEndpoints); // Add the household endpoints
 
 // Serve Swagger UI at /api-docs
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -62,7 +60,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 testDatabaseConnection(sequelize);
 
 // Sync database models with the database
-// Set force to true to drop tables and recreate (be careful with this in production!)
+// This will create tables that don't exist but won't modify existing tables
 sequelize.sync({ force: false, alter: false }).then(() => {
   console.log('Database synchronized successfully');
 }).catch(err => {
@@ -78,9 +76,7 @@ if(isProd){
   https.createServer(options, app).listen(port, () => {
     console.log(`[server]: HTTPS server is running at https://localhost:${port}`);
   });
-
-
-}else{
+} else {
   // Server running ?
   app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
