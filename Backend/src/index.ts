@@ -13,6 +13,8 @@ import memberEndpoints from "./api/memberEndpoints";
 // Import database
 import sequelize from "./ConfigFiles/dbConfig";
 import { testDatabaseConnection } from "./ConfigFiles/dbUtils";
+// Import all models to ensure they're initialized
+import "./ConfigFiles/dbAssociations";
 
 const cors = require('cors');
 
@@ -29,7 +31,7 @@ app.use(express.json());
 
 // CORS for specific origins
 app.use(cors({
-  origin: ['http://localhost:4200', 'https://esn.hugobnl.fr', 'https://www.esn.hugobnl.fr'],
+  origin: ['http://localhost:4200', 'https://roomietasks.hugobnl.fr', 'https://www.roomietasks.hugobnl.fr'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -56,10 +58,16 @@ app.use(memberEndpoints);
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-
-
 // Database test connection
 testDatabaseConnection(sequelize);
+
+// Sync database models with the database
+// Set force to true to drop tables and recreate (be careful with this in production!)
+sequelize.sync({ force: false, alter: false }).then(() => {
+  console.log('Database synchronized successfully');
+}).catch(err => {
+  console.error('Failed to synchronize database:', err);
+});
 
 if(isProd){
   const options = {
@@ -78,4 +86,3 @@ if(isProd){
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 }
-
