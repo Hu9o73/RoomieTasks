@@ -8,7 +8,8 @@ import swaggerUi from 'swagger-ui-express';
 import basicEndpoints from "./api/utilityEndpoints";
 import authEndpoints from "./api/routes/auth";
 import memberEndpoints from "./api/memberEndpoints";
-import householdEndpoints from "./api/householdEndpoints"; // New import
+import householdEndpoints from "./api/householdEndpoints";
+import taskEndpoints from "./api/taskEndpoints"; // New import
 
 // Import database
 import sequelize from "./ConfigFiles/dbConfig";
@@ -50,7 +51,8 @@ const swaggerOptions = {
 app.use(basicEndpoints);
 app.use(authEndpoints);
 app.use(memberEndpoints);
-app.use(householdEndpoints); // Add the household endpoints
+app.use(householdEndpoints);
+app.use(taskEndpoints);
 
 // Serve Swagger UI at /api-docs
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
