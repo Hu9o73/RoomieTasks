@@ -1,0 +1,111 @@
+<div class="container mt-4">
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="!loading && !error">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2>Tasks</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a [routerLink]="['/dashboard/households']">Households</a></li>
+              <li class="breadcrumb-item"><a [routerLink]="['/dashboard/households', householdId]">Household Details</a></li>
+              <li class="breadcrumb-item active">Tasks</li>
+            </ol>
+          </nav>
+        </div>
+        <button class="btn btn-primary" (click)="createTask()">
+          <i class="fas fa-plus"></i> Add Task
+        </button>
+      </div>
+  
+      <div class="card mb-4">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-md-4">
+              <div class="btn-group" role="group">
+                <button type="button" class="btn" [class.btn-primary]="filterStatus === 'all'" 
+                        [class.btn-outline-primary]="filterStatus !== 'all'" (click)="changeFilter('all')">
+                  All
+                </button>
+                <button type="button" class="btn" [class.btn-primary]="filterStatus === 'pending'" 
+                        [class.btn-outline-primary]="filterStatus !== 'pending'" (click)="changeFilter('pending')">
+                  Pending
+                </button>
+                <button type="button" class="btn" [class.btn-primary]="filterStatus === 'completed'" 
+                        [class.btn-outline-primary]="filterStatus !== 'completed'" (click)="changeFilter('completed')">
+                  Completed
+                </button>
+              </div>
+            </div>
+            <div class="col-md-8 text-end">
+              <span class="me-2">Sort by:</span>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn" [class.btn-secondary]="sortBy === 'dueDate'" 
+                        [class.btn-outline-secondary]="sortBy !== 'dueDate'" (click)="changeSort('dueDate')">
+                  Due Date <i *ngIf="sortBy === 'dueDate'" [class.fa-arrow-up]="sortDirection === 'asc'" 
+                              [class.fa-arrow-down]="sortDirection === 'desc'" class="fas"></i>
+                </button>
+                <button type="button" class="btn" [class.btn-secondary]="sortBy === 'priority'" 
+                        [class.btn-outline-secondary]="sortBy !== 'priority'" (click)="changeSort('priority')">
+                  Priority <i *ngIf="sortBy === 'priority'" [class.fa-arrow-up]="sortDirection === 'asc'" 
+                              [class.fa-arrow-down]="sortDirection === 'desc'" class="fas"></i>
+                </button>
+                <button type="button" class="btn" [class.btn-secondary]="sortBy === 'status'" 
+                        [class.btn-outline-secondary]="sortBy !== 'status'" (click)="changeSort('status')">
+                  Status <i *ngIf="sortBy === 'status'" [class.fa-arrow-up]="sortDirection === 'asc'" 
+                            [class.fa-arrow-down]="sortDirection === 'desc'" class="fas"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="filteredTasks.length === 0" class="text-center p-5">
+            <p class="mb-0">No tasks found. Create a new task to get started!</p>
+          </div>
+          
+          <div *ngIf="tasks.length > 0" class="list-group">
+            <div *ngFor="let task of filteredTasks" 
+                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                 [class.list-group-item-success]="task.status === 'completed'"
+                 [class.list-group-item-warning]="task.priority === 'high' && task.status === 'pending'"
+                 (click)="viewTask(task.id)">
+              <div class="d-flex align-items-center">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" 
+                           [checked]="task.status === 'completed'"
+                           (click)="toggleTaskStatus(task, $event)">
+                </div>
+                <div>
+                  <h5 class="mb-1" [class.text-decoration-line-through]="task.status === 'completed'">{{ task.title }}</h5>
+                  <p class="mb-1 text-truncate" style="max-width: 500px;">{{ task.description }}</p>
+                  <small class="text-muted">
+                    Due: {{ task.dueDate | date:'medium' }} |
+                    Priority: <span [ngClass]="{
+                      'text-danger': task.priority === 'high',
+                      'text-warning': task.priority === 'medium',
+                      'text-info': task.priority === 'low'
+                    }">{{ task.priority }}</span> |
+                    Assigned to: {{ task.assignee?.firstName }} {{ task.assignee?.lastName }}
+                  </small>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteTask(task.id, $event)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

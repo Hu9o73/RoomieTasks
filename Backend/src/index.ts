@@ -30,7 +30,7 @@ app.use(express.json());
 // CORS for specific origins
 app.use(cors({
   origin: ['http://localhost:4200', 'https://roomietasks.hugobnl.fr', 'https://www.roomietasks.hugobnl.fr'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 

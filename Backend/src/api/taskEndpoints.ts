@@ -226,61 +226,94 @@ router.put('/tasks/:id', authenticate, async (req: Request & { user?: any }, res
 // Mark a task as completed
 router.patch('/tasks/:id/complete', authenticate, async (req: Request & { user?: any }, res: Response) => {
     try {
-        const taskId = req.params.id;
-        const userId = req.user.id;
-
-        // Get the task
-        const task = await Task.findByPk(taskId);
-        if (!task) {
-            res.status(404).json({ error: 'Task not found' });
-            return;
+      const taskId = req.params.id;
+      
+      // Get the task
+      const task = await Task.findByPk(taskId);
+      if (!task) {
+        res.status(404).json({ error: 'Task not found' });
+        return;
+      }
+  
+      // Check if user is a member of the task's household
+      const userId = req.user.id;
+      if (!(await isMemberOfHousehold(userId, task.householdId))) {
+        res.status(403).json({ error: 'You are not a member of this household' });
+        return;
+      }
+  
+      // Mark as completed
+      task.status = 'completed';
+      await task.save();
+  
+      // Handle recurring tasks - create next occurrence
+      if (task.recurring !== 'one-time') {
+        let nextDueDate = new Date(task.dueDate);
+        
+        if (task.recurring === 'daily') {
+          nextDueDate.setDate(nextDueDate.getDate() + 1);
+        } else if (task.recurring === 'weekly') {
+          nextDueDate.setDate(nextDueDate.getDate() + 7);
+        } else if (task.recurring === 'monthly') {
+          nextDueDate.setMonth(nextDueDate.getMonth() + 1);
         }
-
-        // Check if user is a member of the task's household
-        if (!(await isMemberOfHousehold(userId, task.householdId))) {
-            res.status(403).json({ error: 'You are not a member of this household' });
-            return;
-        }
-
-        // Mark as completed
-        task.status = 'completed';
-        await task.save();
-
-        // Handle recurring tasks - create next occurrence
-        if (task.recurring !== 'one-time') {
-            let nextDueDate = new Date(task.dueDate);
-            
-            if (task.recurring === 'daily') {
-                nextDueDate.setDate(nextDueDate.getDate() + 1);
-            } else if (task.recurring === 'weekly') {
-                nextDueDate.setDate(nextDueDate.getDate() + 7);
-            } else if (task.recurring === 'monthly') {
-                nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-            }
-            
-            // Create next occurrence
-            await Task.create({
-                title: task.title,
-                description: task.description,
-                dueDate: nextDueDate,
-                priority: task.priority,
-                status: 'pending',
-                recurring: task.recurring,
-                householdId: task.householdId,
-                createdBy: task.createdBy,
-                assignedTo: task.assignedTo
-            });
-        }
-
-        res.status(200).json({
-            message: 'Task marked as completed',
-            task
+        
+        // Create next occurrence
+        await Task.create({
+          title: task.title,
+          description: task.description,
+          dueDate: nextDueDate,
+          priority: task.priority,
+          status: 'pending',
+          recurring: task.recurring,
+          householdId: task.householdId,
+          createdBy: task.createdBy,
+          assignedTo: task.assignedTo
         });
+      }
+  
+      res.status(200).json({
+        message: 'Task marked as completed',
+        task
+      });
     } catch (error) {
-        console.error('Error completing task:', error);
-        res.status(500).json({ error: 'Failed to complete task' });
+      console.error('Error completing task:', error);
+      res.status(500).json({ error: 'Failed to complete task' });
     }
-});
+  });
+
+// Mark as pending
+router.patch('/tasks/:id/pending', authenticate, async (req: Request & { user?: any }, res: Response) => {
+    try {
+      const taskId = req.params.id;
+      
+      // Get the task
+      const task = await Task.findByPk(taskId);
+      if (!task) {
+        res.status(404).json({ error: 'Task not found' });
+        return;
+      }
+  
+      // Check if user is a member of the task's household
+      const userId = req.user.id;
+      if (!(await isMemberOfHousehold(userId, task.householdId))) {
+        res.status(403).json({ error: 'You are not a member of this household' });
+        return;
+      }
+  
+      // Mark as pending
+      task.status = 'pending';
+      await task.save();
+  
+      res.status(200).json({
+        message: 'Task marked as pending',
+        task
+      });
+    } catch (error) {
+      console.error('Error marking task as pending:', error);
+      res.status(500).json({ error: 'Failed to mark task as pending' });
+    }
+  });
 
 // Delete a task
 router.delete('/tasks/:id', authenticate, async (req: Request & { user?: any }, res: Response) => {

@@ -1,0 +1,87 @@
+<div class="container mt-4">
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="!loading">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a [routerLink]="['/dashboard/households']">Households</a></li>
+          <li class="breadcrumb-item"><a [routerLink]="['/dashboard/households', householdId]">Household Details</a></li>
+          <li class="breadcrumb-item"><a [routerLink]="['/dashboard/households', householdId, 'tasks']">Tasks</a></li>
+          <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Task' : 'New Task' }}</li>
+        </ol>
+      </nav>
+  
+      <div class="card">
+        <div class="card-header">
+          <h2>{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h2>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" [(ngModel)]="task.title" name="title" required>
+            </div>
+  
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" rows="3" [(ngModel)]="task.description" name="description"></textarea>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="dueDate" class="form-label">Due Date</label>
+                <input type="datetime-local" class="form-control" id="dueDate" [(ngModel)]="task.dueDate" name="dueDate" required>
+              </div>
+  
+              <div class="col-md-6 mb-3">
+                <label for="assignedTo" class="form-label">Assign To</label>
+                <select class="form-select" id="assignedTo" [(ngModel)]="task.assignedTo" name="assignedTo" required>
+                  <option [ngValue]="0" disabled>Select a member</option>
+                  <option *ngFor="let member of members" [ngValue]="member.id">
+                    {{ member.firstName }} {{ member.lastName }}
+                  </option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="priority" class="form-label">Priority</label>
+                <select class="form-select" id="priority" [(ngModel)]="task.priority" name="priority">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+  
+              <div class="col-md-6 mb-3">
+                <label for="recurring" class="form-label">Recurrence</label>
+                <select class="form-select" id="recurring" [(ngModel)]="task.recurring" name="recurring">
+                  <option value="one-time">One-time</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" (click)="cancel()">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="submitting">
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isEditMode ? 'Update Task' : 'Create Task' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

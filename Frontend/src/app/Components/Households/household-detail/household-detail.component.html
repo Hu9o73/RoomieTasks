@@ -118,6 +118,11 @@
             <div class="card-header">
               <h5 class="mb-0">Household Information</h5>
             </div>
+            <div class="mt-4">
+              <a [routerLink]="['/dashboard/households', householdId, 'tasks']" class="btn btn-primary w-100">
+                <i class="fas fa-tasks"></i> Manage Tasks
+              </a>
+            </div>
             <div class="card-body">
               <p><strong>Created:</strong> {{ household.createdAt | date }}</p>
               <p><strong>Owner:</strong> 

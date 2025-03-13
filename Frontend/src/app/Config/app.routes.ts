@@ -13,6 +13,8 @@ import { MyProfileMainComponent } from '../Components/Dashboard/MyProfile/my-pro
 import { AdminMainComponent } from '../Components/Dashboard/Admin/admin-main/admin-main.component';
 import { HouseholdListComponent } from '../Components/Households/household-list/household-list.component';
 import { HouseholdDetailComponent } from '../Components/Households/household-detail/household-detail.component';
+import { TaskListComponent } from '../Components/Tasks/task-list/task-list.component';
+import { TaskFormComponent } from '../Components/Tasks/task-form/task-form.component';
 
 // Guards
 import { AuthGuard } from '../Guards/auth.guard';
@@ -32,6 +34,8 @@ export const routes: Routes = [
       { path: 'myProfile', component: MyProfileMainComponent },
       { path: 'households', component: HouseholdListComponent },
       { path: 'households/:id', component: HouseholdDetailComponent },
+      { path: 'households/:householdId/tasks', component: TaskListComponent },
+      { path: 'households/:householdId/tasks/:taskId', component: TaskFormComponent },
       {
         path: 'admin',
         component: AdminMainComponent,
