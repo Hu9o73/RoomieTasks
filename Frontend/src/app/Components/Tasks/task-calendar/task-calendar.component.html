@@ -46,6 +46,10 @@
                 class="task-item" 
                 [class]="getPriorityClass(task.priority)"
                 [routerLink]="['/dashboard/households', task.householdId, 'tasks', task.id]">
+              <i *ngIf="task.recurring !== 'one-time'" 
+                 [class]="getRecurringIcon(task.recurring)" 
+                 class="fa-solid me-1" 
+                 title="{{getRecurringText(task.recurring)}}"></i>
               {{ task.title }}
             </div>
             <div *ngIf="day.tasks.length > 3" class="more-tasks">

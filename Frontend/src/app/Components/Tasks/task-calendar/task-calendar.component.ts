@@ -150,4 +150,22 @@ export class TaskCalendarComponent implements OnInit {
       default: return 'bg-secondary';
     }
   }
+
+  getRecurringIcon(recurring: string): string {
+    switch(recurring) {
+      case 'daily': return 'fa-rotate';
+      case 'weekly': return 'fa-calendar-week';
+      case 'monthly': return 'fa-calendar-days';
+      default: return '';
+    }
+  }
+
+  getRecurringText(recurring: string): string {
+    switch(recurring) {
+      case 'daily': return 'Repeats daily';
+      case 'weekly': return 'Repeats weekly';
+      case 'monthly': return 'Repeats monthly';
+      default: return 'One-time task';
+    }
+  }
 }
