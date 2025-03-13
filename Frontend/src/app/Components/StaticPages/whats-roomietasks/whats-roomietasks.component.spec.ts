@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WhatsESNComponent } from './whats-esn.component';
+import { WhatsESNComponent } from './whats-roomietasks.component';
 
 describe('WhatsESNComponent', () => {
   let component: WhatsESNComponent;

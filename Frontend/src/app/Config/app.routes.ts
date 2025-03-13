@@ -5,7 +5,7 @@ import { SignupComponent } from '../Components/Authentication/signup/signup.comp
 import { LoginComponent } from '../Components/Authentication/login/login.component';
 import { DashboardMainComponent } from '../Components/Dashboard/dashboard-main/dashboard-main.component';
 import { FAQComponent } from '../Components/StaticPages/faq/faq.component';
-import { WhatsESNComponent } from '../Components/StaticPages/whats-esn/whats-esn.component';
+import { WhatsRoomieTasksComponent } from '../Components/StaticPages/whats-roomietasks/whats-roomietasks.component';
 import { TheTeamComponent } from '../Components/StaticPages/the-team/the-team.component';
 
 // Dashboard
@@ -51,7 +51,7 @@ export const routes: Routes = [
   },
 
   { path: 'faq', component: FAQComponent },
-  { path: 'esn', component: WhatsESNComponent },
+  { path: 'roomietasks', component: WhatsRoomieTasksComponent },
   { path: 'TheTeam', component: TheTeamComponent },
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
