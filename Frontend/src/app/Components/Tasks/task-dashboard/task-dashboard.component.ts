@@ -10,7 +10,7 @@ import { Household } from '../../../models/household.model';
 @Component({
   selector: 'app-task-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './task-dashboard.component.html',
   styleUrl: './task-dashboard.component.css'
 })
