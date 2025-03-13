@@ -16,6 +16,7 @@ import { HouseholdDetailComponent } from '../Components/Households/household-det
 import { TaskListComponent } from '../Components/Tasks/task-list/task-list.component';
 import { TaskFormComponent } from '../Components/Tasks/task-form/task-form.component';
 import { DashboardHomeComponent } from '../Components/Dashboard/dashboard-home/dashboard-home.component';
+import { TaskCalendarComponent } from '../Components/Tasks/task-calendar/task-calendar.component';
 
 // Guards
 import { AuthGuard } from '../Guards/auth.guard';
@@ -38,6 +39,7 @@ export const routes: Routes = [
       { path: 'households/:id', component: HouseholdDetailComponent },
       { path: 'households/:householdId/tasks', component: TaskListComponent },
       { path: 'households/:householdId/tasks/:taskId', component: TaskFormComponent },
+      { path: 'calendar', component: TaskCalendarComponent },
       {
         path: 'admin',
         component: AdminMainComponent,
