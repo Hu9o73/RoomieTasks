@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, catchError, tap } from 'rxjs';
-import { environment } from '../../../environments/environments';
+import { environment } from '../../../environments/environments.task';
 import { Household, HouseholdDetails } from '../../models/household.model';
 
 @Injectable({
