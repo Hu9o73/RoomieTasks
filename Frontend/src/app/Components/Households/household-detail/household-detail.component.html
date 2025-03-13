@@ -1,0 +1,136 @@
+<div class="container mt-4">
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="!loading && !error && household">
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a routerLink="/dashboard/households">Households</a></li>
+              <li class="breadcrumb-item active" aria-current="page">{{ household.name }}</li>
+            </ol>
+          </nav>
+          <h2 *ngIf="!editMode">{{ household.name }}</h2>
+          <div *ngIf="editMode" class="input-group mb-3">
+            <input type="text" class="form-control" [(ngModel)]="householdName" placeholder="Household name">
+            <button class="btn btn-success" (click)="updateHousehold()" [disabled]="updating">
+              <span *ngIf="updating" class="spinner-border spinner-border-sm me-2"></span>
+              Save
+            </button>
+            <button class="btn btn-secondary" (click)="toggleEditMode()">Cancel</button>
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <button *ngIf="isOwner && !editMode" class="btn btn-outline-primary me-2" (click)="toggleEditMode()">
+            Edit
+          </button>
+          <button *ngIf="!isOwner" class="btn btn-outline-danger" (click)="leaveHousehold()" [disabled]="leaving">
+            <span *ngIf="leaving" class="spinner-border spinner-border-sm me-2"></span>
+            Leave Household
+          </button>
+          <button *ngIf="isOwner" class="btn btn-outline-danger" (click)="deleteHousehold()" [disabled]="deleting">
+            <span *ngIf="deleting" class="spinner-border spinner-border-sm me-2"></span>
+            Delete Household
+          </button>
+        </div>
+      </div>
+  
+      <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+      </div>
+  
+      <div *ngIf="operationError" class="alert alert-danger alert-dismissible fade show">
+        {{ operationError }}
+        <button type="button" class="btn-close" (click)="operationError = ''"></button>
+      </div>
+  
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Members</h5>
+            </div>
+            <div class="card-body">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let member of members">
+                    <td>{{ member.firstName }} {{ member.lastName }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="{
+                        'bg-primary': member.role === 'owner',
+                        'bg-success': member.role === 'admin',
+                        'bg-secondary': member.role === 'member'
+                      }">
+                        {{ member.role }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="members.length === 0">
+                    <td colspan="3" class="text-center">No members found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Invite Members</h5>
+            </div>
+            <div class="card-body">
+              <p class="mb-2">Share this code with others to join your household:</p>
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" [value]="showInviteCode ? household.inviteCode : '********'" readonly>
+                <button class="btn btn-outline-secondary" (click)="toggleShowInviteCode()">
+                  <i [ngClass]="showInviteCode ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+                <button class="btn btn-outline-primary" (click)="copyInviteCode()">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <button *ngIf="isOwner" class="btn btn-outline-secondary w-100" (click)="generateNewInviteCode()" [disabled]="generating">
+                <span *ngIf="generating" class="spinner-border spinner-border-sm me-2"></span>
+                Generate New Code
+              </button>
+            </div>
+          </div>
+  
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Household Information</h5>
+            </div>
+            <div class="card-body">
+              <p><strong>Created:</strong> {{ household.createdAt | date }}</p>
+              <p><strong>Owner:</strong> 
+                <ng-container *ngFor="let member of members">
+                  <ng-container *ngIf="member.id === household.ownerId">
+                    {{ member.firstName }} {{ member.lastName }}
+                  </ng-container>
+                </ng-container>
+              </p>
+              <p><strong>Total Members:</strong> {{ members.length }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

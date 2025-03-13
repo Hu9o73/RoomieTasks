@@ -11,11 +11,12 @@ import { TheTeamComponent } from '../Components/StaticPages/the-team/the-team.co
 // Dashboard
 import { MyProfileMainComponent } from '../Components/Dashboard/MyProfile/my-profile-main/my-profile-main.component';
 import { AdminMainComponent } from '../Components/Dashboard/Admin/admin-main/admin-main.component';
+import { HouseholdListComponent } from '../Components/Households/household-list/household-list.component';
+import { HouseholdDetailComponent } from '../Components/Households/household-detail/household-detail.component';
 
 // Guards
 import { AuthGuard } from '../Guards/auth.guard';
 import { AdminGuard } from '../Guards/admin.guard';
-import { BureauGuard } from '../Guards/bureau.guard';
 
 export const routes: Routes = [
   { path: 'home', component: HomeMainComponent },
@@ -28,9 +29,9 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: '', component: MyProfileMainComponent },
-      //{ path: 'myDash', component: MyDashMainComponent },
       { path: 'myProfile', component: MyProfileMainComponent },
-      //{ path: 'events', component: EventsMainComponent },
+      { path: 'households', component: HouseholdListComponent },
+      { path: 'households/:id', component: HouseholdDetailComponent },
       {
         path: 'admin',
         component: AdminMainComponent,

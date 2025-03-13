@@ -4,13 +4,8 @@
 
     <nav>
       <ul>
-        <!--
-        <li><a routerLink="/dashboard/myDash"><i class="fa-solid fa-gauge"></i> My Dashboard</a></li>
-        -->
         <li><a routerLink="/dashboard/myProfile"><i class="fa-solid fa-user"></i> My Profile</a></li>
-        <!--
-        <li><a routerLink="/dashboard/events"><i class="fa-regular fa-calendar-days"></i> Events</a></li>
-        -->
+        <li><a routerLink="/dashboard/households"><i class="fa-solid fa-house"></i> Households</a></li>
         <ng-container *ngIf="isAdmin">
           <li><a routerLink="/dashboard/admin"><i class="fa-solid fa-lock"></i> Admin</a></li>
         </ng-container>
