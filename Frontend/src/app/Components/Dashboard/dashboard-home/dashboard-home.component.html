@@ -1,0 +1,55 @@
+<div class="container mt-4">
+    <h2>Welcome to your Dashboard</h2>
+    
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Upcoming Tasks</h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="loading" class="text-center py-3">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+            
+            <div *ngIf="!loading && !error">
+              <div *ngIf="upcomingTasks.length === 0" class="text-center py-4">
+                <p class="mb-0">No upcoming tasks in the next 7 days</p>
+              </div>
+              
+              <div *ngIf="upcomingTasks.length > 0" class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Task</th>
+                      <th>Due Date</th>
+                      <th>Priority</th>
+                      <th>Household</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let task of upcomingTasks" [routerLink]="['/dashboard/households', task.householdId, 'tasks', task.id]" style="cursor: pointer;">
+                      <td>{{ task.title }}</td>
+                      <td>{{ task.dueDate | date:'medium' }}</td>
+                      <td>
+                        <span [ngClass]="getPriorityClass(task.priority)">
+                          {{ task.priority | titlecase }}
+                        </span>
+                      </td>
+                      <td>{{ task.household?.name }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

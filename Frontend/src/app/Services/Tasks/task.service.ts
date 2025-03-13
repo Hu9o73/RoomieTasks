@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environments';
 import { Task } from '../../models/task.model';
 
@@ -32,10 +32,16 @@ export class TaskService {
     return this.http.get<{ tasks: Task[] }>(`${this.apiUrl}/tasks/my-tasks`, { headers });
   }
 
-  // Get upcoming tasks (next 7 days)
+  // Get upcoming tasks
   getUpcomingTasks(): Observable<{ tasks: Task[] }> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<{ tasks: Task[] }>(`${this.apiUrl}/tasks/upcoming`, { headers });
+    // For now, let's work around the issue by using getMyTasks instead (/tasks/upcoming is not working)
+    // until we debug the proper endpoint
+    return this.getMyTasks();
+    
+    // Original code:
+    // const headers = this.getAuthHeaders();
+    // console.log('Fetching upcoming tasks from:', `${this.apiUrl}/tasks/upcoming`);
+    // return this.http.get<{ tasks: Task[] }>(`${this.apiUrl}/tasks/upcoming`, { headers });
   }
 
   // Get a specific task

@@ -15,6 +15,7 @@ import { HouseholdListComponent } from '../Components/Households/household-list/
 import { HouseholdDetailComponent } from '../Components/Households/household-detail/household-detail.component';
 import { TaskListComponent } from '../Components/Tasks/task-list/task-list.component';
 import { TaskFormComponent } from '../Components/Tasks/task-form/task-form.component';
+import { DashboardHomeComponent } from '../Components/Dashboard/dashboard-home/dashboard-home.component';
 
 // Guards
 import { AuthGuard } from '../Guards/auth.guard';
@@ -30,7 +31,8 @@ export const routes: Routes = [
     component: DashboardMainComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', component: MyProfileMainComponent },
+      { path: '', component: DashboardHomeComponent },
+      { path: 'home', component: DashboardHomeComponent },
       { path: 'myProfile', component: MyProfileMainComponent },
       { path: 'households', component: HouseholdListComponent },
       { path: 'households/:id', component: HouseholdDetailComponent },
