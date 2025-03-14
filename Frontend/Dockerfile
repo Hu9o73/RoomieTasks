@@ -34,17 +34,20 @@ RUN npm install
 # Copy the project files
 COPY . .
 
-# Build the Angular app
+# Build the Angular app - make sure to use the correct build command
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
 # Copy the build output to replace the default nginx contents
-COPY --from=build /app/dist/frontend/ /usr/share/nginx/html
+# Check the actual output directory structure in your dist folder
+COPY --from=build /app/dist/frontend/ /usr/share/nginx/html/
+# For debugging - create a test file to verify copying works
+RUN echo "RoomieTasks is running!" > /usr/share/nginx/html/test.html
 
-# Copy custom nginx config if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
