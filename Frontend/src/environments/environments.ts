@@ -1,4 +1,3 @@
 export const environment = {
-  // Docker container service names instead of localhost
-  apiUrl: 'http://user-service:3000',
+  apiUrl: 'http://localhost:3000', // For frontend->backend communication
 };
