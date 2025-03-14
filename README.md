@@ -52,9 +52,6 @@ The application consists of:
    - User Service API: http://localhost:3000
    - Task Service API: http://localhost:3001
 
-### Production Environment
-
-To be implemented
 
 ## Network Isolation
 
