@@ -1,5 +1,5 @@
 # Development image with hot-reload
-FROM node:18 as build
+FROM node:18-alpine as build
 
 WORKDIR /app
 
