@@ -14,10 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Lint Dockerfiles
+      - name: Lint Frontend Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Frontend/Dockerfile,Backend-User/Dockerfile,Backend-Task/Dockerfile
+          dockerfile: Frontend/Dockerfile
+          
+      - name: Lint User Service Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Backend-User/Dockerfile
+          
+      - name: Lint Task Service Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Backend-Task/Dockerfile
           
   sast:
     runs-on: ubuntu-latest
