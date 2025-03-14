@@ -1,112 +1,94 @@
 version: '3.8'
 
+networks:
+  frontend-network:
+    driver: bridge
+  user-service-network:
+    driver: bridge
+  task-service-network:
+    driver: bridge
+
+volumes:
+  roomietasks-userdb-data:
+  roomietasks-taskdb-data:
+
 services:
-  # Frontend service
+  # Frontend Service
   frontend:
-    build: 
+    build:
       context: ./Frontend
-      target: development # Use the development stage for hot reload
-    volumes:
-      - ./Frontend:/app
-      - /app/node_modules # This prevents overwriting node_modules with host directory
+      dockerfile: Dockerfile
     ports:
-      - "4200:4200"
-    environment:
-      - NODE_ENV=development
+      - "80:80"
     networks:
       - frontend-network
     depends_on:
       - user-service
       - task-service
+    environment:
+      - NODE_ENV=production
 
-  # User management service
+  # User Service
   user-service:
-    build: ./Backend-User
-    volumes:
-      - ./Backend-User:/app
-      - /app/node_modules
+    build:
+      context: ./Backend-User
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - JWT_SECRET=your_jwt_secret_key
-      - DB_HOST=userdb
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_DATABASE=userdb
     networks:
       - frontend-network
       - user-service-network
     depends_on:
       - userdb
-
-  # Task management service
-  task-service:
-    build: ./Backend-Task
-    volumes:
-      - ./Backend-Task:/app
-      - /app/node_modules
-    ports:
-      - "3001:3001"
     environment:
-      - NODE_ENV=development
-      - JWT_SECRET=your_jwt_secret_key
-      - DB_HOST=taskdb
+      - DB_HOST=userdb
+      - DB_DATABASE=userdb
       - DB_USER=root
       - DB_PASSWORD=rootpassword
-      - DB_DATABASE=taskdb
-      - USER_SERVICE_URL=http://user-service:3000
+      - JWT_SECRET=your_jwt_secret_key
+      - JWT_EXPIRES_IN=24h
+
+  # Task Service
+  task-service:
+    build:
+      context: ./Backend-Task
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
     networks:
       - frontend-network
       - task-service-network
     depends_on:
       - taskdb
-
-  # User database
-  userdb:
-    image: mysql:8
-    volumes:
-      - userdb-data:/var/lib/mysql
+      - user-service
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: userdb
+      - DB_HOST=taskdb
+      - DB_DATABASE=taskdb
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - JWT_SECRET=your_jwt_secret_key
+      - USER_SERVICE_URL=http://user-service:3000
+
+  # User Database
+  userdb:
+    image: mysql:8.0
     networks:
       - user-service-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Task database
-  taskdb:
-    image: mysql:8
     volumes:
-      - taskdb-data:/var/lib/mysql
+      - roomietasks-userdb-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: taskdb
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=userdb
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Task Database
+  taskdb:
+    image: mysql:8.0
     networks:
       - task-service-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-networks:
-  # Frontend can access both services
-  frontend-network:
-    driver: bridge
-  # User service can only access its database
-  user-service-network:
-    driver: bridge
-  # Task service can only access its database
-  task-service-network:
-    driver: bridge
-
-volumes:
-  userdb-data:
-    name: roomietasks-userdb-data
-  taskdb-data:
-    name: roomietasks-taskdb-data
+    volumes:
+      - roomietasks-taskdb-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=taskdb
+    command: --default-authentication-plugin=mysql_native_password

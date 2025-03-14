@@ -1,3 +1,4 @@
 export const environment = {
-    apiUrl: 'http://localhost:3001',
-  };
+  // Docker container service names instead of localhost
+  apiUrl: 'http://task-service:3001',
+};

@@ -1,4 +1,4 @@
 export const environment = {
-  // Change this URL when sent to production
-  apiUrl: 'http://localhost:3000',
+  // Docker container service names instead of localhost
+  apiUrl: 'http://user-service:3000',
 };
