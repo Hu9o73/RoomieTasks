@@ -251,7 +251,7 @@ jobs:
           
       # Upload deployment files as artifacts
       - name: Upload deployment files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-files
           path: |
