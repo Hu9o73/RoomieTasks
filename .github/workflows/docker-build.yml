@@ -198,10 +198,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            docker-compose.deploy.yml
-            .env.example
-            DEPLOY.md
           body: |
             # RoomieTasks ${{ steps.vars.outputs.VERSION }}
             
