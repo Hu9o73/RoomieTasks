@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # Frontend service
+  frontend:
+    build: 
+      context: ./Frontend
+      target: development # Use the development stage for hot reload
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules # This prevents overwriting node_modules with host directory
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - frontend-network
+    depends_on:
+      - user-service
+      - task-service
+
+  # User management service
+  user-service:
+    build: ./Backend-User
+    volumes:
+      - ./Backend-User:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=your_jwt_secret_key
+      - DB_HOST=userdb
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_DATABASE=userdb
+    networks:
+      - frontend-network
+      - user-service-network
+    depends_on:
+      - userdb
+
+  # Task management service
+  task-service:
+    build: ./Backend-Task
+    volumes:
+      - ./Backend-Task:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=your_jwt_secret_key
+      - DB_HOST=taskdb
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_DATABASE=taskdb
+      - USER_SERVICE_URL=http://user-service:3000
+    networks:
+      - frontend-network
+      - task-service-network
+    depends_on:
+      - taskdb
+
+  # User database
+  userdb:
+    image: mysql:8
+    volumes:
+      - userdb-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: userdb
+    networks:
+      - user-service-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Task database
+  taskdb:
+    image: mysql:8
+    volumes:
+      - taskdb-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: taskdb
+    networks:
+      - task-service-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  # Frontend can access both services
+  frontend-network:
+    driver: bridge
+  # User service can only access its database
+  user-service-network:
+    driver: bridge
+  # Task service can only access its database
+  task-service-network:
+    driver: bridge
+
+volumes:
+  userdb-data:
+    name: roomietasks-userdb-data
+  taskdb-data:
+    name: roomietasks-taskdb-data

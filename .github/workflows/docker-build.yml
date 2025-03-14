@@ -1,0 +1,287 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Lint Dockerfiles
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Frontend/Dockerfile,Backend-User/Dockerfile,Backend-Task/Dockerfile
+          
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          
+  build-and-push:
+    needs: [lint, sast]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      # Set tag version based on git tag or 'latest' for main branch
+      - name: Set version tag
+        id: vars
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=latest" >> $GITHUB_OUTPUT
+          fi
+          
+      # Frontend Image
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./Frontend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-frontend:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-frontend:latest
+          
+      # User Service Image  
+      - name: Build and push User Service image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./Backend-User
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-user-service:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-user-service:latest
+          
+      # Task Service Image
+      - name: Build and push Task Service image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./Backend-Task
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-task-service:${{ steps.vars.outputs.VERSION }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-task-service:latest
+            
+      # Create docker-compose.yml for easy deployment
+      - name: Generate deployment docker-compose.yml
+        run: |
+          cat > docker-compose.deploy.yml << EOF
+          version: '3.8'
+
+          services:
+            # Frontend service
+            frontend:
+              image: ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-frontend:${{ steps.vars.outputs.VERSION }}
+              ports:
+                - "80:80"
+              networks:
+                - frontend-network
+              depends_on:
+                - user-service
+                - task-service
+              restart: unless-stopped
+
+            # User management service
+            user-service:
+              image: ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-user-service:${{ steps.vars.outputs.VERSION }}
+              environment:
+                - NODE_ENV=production
+                - JWT_SECRET=\${JWT_SECRET}
+                - DB_HOST=userdb
+                - DB_USER=root
+                - DB_PASSWORD=\${DB_PASSWORD}
+                - DB_DATABASE=userdb
+              networks:
+                - frontend-network
+                - user-service-network
+              depends_on:
+                - userdb
+              restart: unless-stopped
+
+            # Task management service
+            task-service:
+              image: ${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-task-service:${{ steps.vars.outputs.VERSION }}
+              environment:
+                - NODE_ENV=production
+                - JWT_SECRET=\${JWT_SECRET}
+                - DB_HOST=taskdb
+                - DB_USER=root
+                - DB_PASSWORD=\${DB_PASSWORD}
+                - DB_DATABASE=taskdb
+                - USER_SERVICE_URL=http://user-service:3000
+              networks:
+                - frontend-network
+                - task-service-network
+              depends_on:
+                - taskdb
+              restart: unless-stopped
+
+            # User database
+            userdb:
+              image: mysql:8
+              volumes:
+                - userdb-data:/var/lib/mysql
+              environment:
+                MYSQL_ROOT_PASSWORD: \${DB_PASSWORD}
+                MYSQL_DATABASE: userdb
+              networks:
+                - user-service-network
+              restart: unless-stopped
+
+            # Task database
+            taskdb:
+              image: mysql:8
+              volumes:
+                - taskdb-data:/var/lib/mysql
+              environment:
+                MYSQL_ROOT_PASSWORD: \${DB_PASSWORD}
+                MYSQL_DATABASE: taskdb
+              networks:
+                - task-service-network
+              restart: unless-stopped
+
+          networks:
+            frontend-network:
+              driver: bridge
+            user-service-network:
+              driver: bridge
+            task-service-network:
+              driver: bridge
+
+          volumes:
+            userdb-data:
+              name: roomietasks-userdb-data
+            taskdb-data:
+              name: roomietasks-taskdb-data
+          EOF
+          
+      # Create .env.example for easier deployment
+      - name: Create .env.example file
+        run: |
+          cat > .env.example << EOF
+          # Required environment variables for deployment
+          JWT_SECRET=your_jwt_secret_key
+          DB_PASSWORD=your_secure_database_password
+          EOF
+          
+      # Create deployment instructions
+      - name: Create deployment README
+        run: |
+          cat > DEPLOY.md << EOF
+          # RoomieTasks Deployment Guide
+
+          This guide helps you deploy the RoomieTasks application using pre-built Docker images.
+
+          ## Requirements
+          - Docker and Docker Compose
+          - 4GB+ RAM
+          - 10GB+ free disk space
+
+          ## Deployment Steps
+
+          1. Download the deployment files:
+             \`\`\`bash
+             curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.deploy.yml
+             curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/.env.example
+             \`\`\`
+
+          2. Rename the .env.example file to .env and set secure values:
+             \`\`\`bash
+             mv .env.example .env
+             # Edit the .env file to set secure passwords and secrets
+             \`\`\`
+
+          3. Start the application:
+             \`\`\`bash
+             docker-compose -f docker-compose.deploy.yml up -d
+             \`\`\`
+
+          4. Access the application at http://localhost
+
+          ## Troubleshooting
+
+          - If you encounter database connection issues, ensure the databases have been fully initialized before services try to connect
+          - For permission issues with volumes, ensure Docker has proper permissions to create and manage volumes
+          - Check logs with \`docker-compose -f docker-compose.deploy.yml logs\`
+
+          ## Security Notes
+
+          - Change the default passwords in the .env file
+          - Consider implementing HTTPS with a reverse proxy like Nginx or Traefik
+          - Backup your volumes regularly with \`docker run --rm -v roomietasks-userdb-data:/data -v \$(pwd)/backups:/backups alpine tar cvf /backups/userdb-backup.tar /data\`
+          EOF
+          
+      # Upload deployment files as artifacts
+      - name: Upload deployment files
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-files
+          path: |
+            docker-compose.deploy.yml
+            .env.example
+            DEPLOY.md
+            
+      # Create a GitHub release with deployment files when a tag is pushed
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            docker-compose.deploy.yml
+            .env.example
+            DEPLOY.md
+          body: |
+            # RoomieTasks ${{ steps.vars.outputs.VERSION }}
+            
+            ## Deployment
+            
+            To deploy this version, follow the instructions in DEPLOY.md included in this release.
+            
+            ## Docker Images
+            
+            - Frontend: `${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-frontend:${{ steps.vars.outputs.VERSION }}`
+            - User Service: `${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-user-service:${{ steps.vars.outputs.VERSION }}`
+            - Task Service: `${{ secrets.DOCKER_HUB_USERNAME }}/roomietasks-task-service:${{ steps.vars.outputs.VERSION }}`
+            
+            ## Quick Start
+            
+            ```bash
+            # Download deployment files
+            curl -O https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/docker-compose.deploy.yml
+            curl -O https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/.env.example
+            
+            # Setup environment variables
+            mv .env.example .env
+            # Edit .env with your secure values
+            
+            # Start the application
+            docker-compose -f docker-compose.deploy.yml up -d
+            ```
