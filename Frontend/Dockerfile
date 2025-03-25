@@ -16,4 +16,4 @@ COPY . .
 CMD ["npm", "start", "--", "--host", "0.0.0.0"]
 
 # Expose Angular dev server port
-EXPOSE 4200
+# EXPOSE 4200
